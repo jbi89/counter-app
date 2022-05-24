@@ -1,0 +1,35 @@
+name: Deploy Web App
+
+on:
+  push:
+
+jobs:
+  build:
+    name: Build And Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Clone repo & checkout code
+      uses: actions/checkout@v2
+    
+    - name: Install Node.js
+      uses: actions/setup-node@v2.4.0
+      with:
+        node-version: 14.x
+    
+    - name: Install NPM packages
+      run: npm ci
+    
+    - name: Build project
+      run: npm run build
+
+    - name: Test project
+      run: npm test
+
+    - name: Deploy to Github pages
+      uses: crazy-max/ghaction-github-pages@v2
+      with:
+        target_branch: gh-pages
+        build_dir: ./build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
